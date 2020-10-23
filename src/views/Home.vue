@@ -3,14 +3,22 @@
     <ion-content :fullscreen="true"> </ion-content>
     <ion-footer class="ion-padding">
       <ion-input />
-      <ion-icon :icon="send"></ion-icon>
+      <ion-button fill="clear">
+        <ion-icon :icon="send"></ion-icon>
+      </ion-button>
     </ion-footer>
   </ion-page>
 </template>
 
 <script lang="ts">
 import { send } from "ionicons/icons";
-import { IonContent, IonPage, IonFooter, IonInput } from "@ionic/vue";
+import {
+  IonContent,
+  IonPage,
+  IonFooter,
+  IonInput,
+  IonButton,
+} from "@ionic/vue";
 import { defineComponent } from "vue";
 
 export default defineComponent({
@@ -20,6 +28,7 @@ export default defineComponent({
     IonPage,
     IonFooter,
     IonInput,
+    IonButton,
   },
   setup() {
     return { send };
@@ -30,6 +39,9 @@ export default defineComponent({
 <style scoped>
 ion-footer {
   background: var(--ion-color-medium);
+  display: flex;
+  height: 8%;
+  align-items: center;
 }
 ion-input {
   --background: var(--ion-color-medium-contrast);
