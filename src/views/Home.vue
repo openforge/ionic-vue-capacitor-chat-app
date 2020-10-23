@@ -1,6 +1,9 @@
 <template>
   <ion-page>
-    <ion-content :fullscreen="true"> </ion-content>
+    <ion-content :fullscreen="true" class="ion-padding">
+      <div class="chat-bubble">Hello, this is a message.</div>
+      <div class="chat-bubble sender">Hi! this is another message.</div>
+    </ion-content>
     <ion-footer class="ion-padding">
       <ion-input />
       <ion-button fill="clear">
@@ -47,5 +50,17 @@ ion-input {
   --background: var(--ion-color-medium-contrast);
   border-radius: 20px;
   --padding-start: 15px;
+}
+.chat-bubble {
+  background: gainsboro;
+  max-width: 75%;
+  width: max-content;
+  border-radius: 15px;
+  padding: 10px;
+  margin-top: 20px;
+}
+.sender {
+  background: lightblue;
+  margin-left: auto;
 }
 </style>
