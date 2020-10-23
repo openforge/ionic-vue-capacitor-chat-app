@@ -1,0 +1,7 @@
+{
+  "name": "vue-chat",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
