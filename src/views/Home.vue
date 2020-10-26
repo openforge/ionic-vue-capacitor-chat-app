@@ -1,8 +1,13 @@
 <template>
   <ion-page>
     <ion-content :fullscreen="true" class="ion-padding">
-      <div class="chat-bubble">Hello, this is a message.</div>
-      <div class="chat-bubble sender">{{ state.roomID }}</div>
+      <div class="chat-bubble">
+        <p class="author">Claudio</p>
+        <p class="body">Hello, this is a message.</p>
+      </div>
+      <div class="chat-bubble receiver">
+        <p class="body">Hi! this is a response.</p>
+      </div>
     </ion-content>
     <ion-footer class="ion-padding">
       <ion-input />
@@ -23,7 +28,6 @@ import {
   IonButton,
 } from "@ionic/vue";
 import { defineComponent } from "vue";
-import { useRoute } from "vue-router";
 
 export default defineComponent({
   name: "Home",
@@ -35,13 +39,7 @@ export default defineComponent({
     IonButton,
   },
   setup() {
-    const route = useRoute();
-    const { id } = route.params as { id: string };
-    const state: {
-      roomID: string;
-      messages: string[];
-    } = { roomID: id || "", messages: [] };
-    return { send, state };
+    return { send };
   },
 });
 </script>
@@ -58,15 +56,27 @@ ion-input {
   border-radius: 20px;
   --padding-start: 15px;
 }
+ion-icon {
+  color: var(--ion-color-medium-contrast);
+  margin-left: 10px;
+}
 .chat-bubble {
+  margin-top: 20px;
+}
+.author {
+  color: var(--ion-color-medium);
+  margin: 4px 10px;
+}
+.body {
   background: gainsboro;
   max-width: 75%;
   width: max-content;
   border-radius: 15px;
   padding: 10px;
-  margin-top: 20px;
+  margin: 0;
 }
-.sender {
+
+.receiver > p {
   background: lightblue;
   margin-left: auto;
 }

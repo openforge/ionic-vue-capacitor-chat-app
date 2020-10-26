@@ -8,10 +8,9 @@ const routes: Array<RouteRecordRaw> = [
     redirect: '/home'
   },
   {
-    path: '/home/:id?',
+    path: '/home',
     name: 'Home',
     component: Home,
-    props: true,
   }
 ]
 
