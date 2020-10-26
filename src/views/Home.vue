@@ -2,7 +2,7 @@
   <ion-page>
     <ion-content :fullscreen="true" class="ion-padding">
       <div class="chat-bubble">Hello, this is a message.</div>
-      <div class="chat-bubble sender">Hi! this is another message.</div>
+      <div class="chat-bubble sender">{{ state.roomID }}</div>
     </ion-content>
     <ion-footer class="ion-padding">
       <ion-input />
@@ -23,6 +23,7 @@ import {
   IonButton,
 } from "@ionic/vue";
 import { defineComponent } from "vue";
+import { useRoute } from "vue-router";
 
 export default defineComponent({
   name: "Home",
@@ -34,7 +35,13 @@ export default defineComponent({
     IonButton,
   },
   setup() {
-    return { send };
+    const route = useRoute();
+    const { id } = route.params as { id: string };
+    const state: {
+      roomID: string;
+      messages: string[];
+    } = { roomID: id || "", messages: [] };
+    return { send, state };
   },
 });
 </script>
