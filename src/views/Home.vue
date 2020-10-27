@@ -8,25 +8,32 @@
         @click.prevent="createChat()"
         >Add New Chat</ion-button
       >
-      <ion-list>
-        <ion-item></ion-item>
+      <ion-list v-if="chatIDs">
+        <ion-item v-for="(id, i) in chatIDs" :key="i">
+          {{ id }}
+        </ion-item>
       </ion-list>
+      <ion-button class="ion-margin" color="warning" @click.prevent="logout()"
+        >Logout</ion-button
+      >
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, inject } from "vue";
-import { IonContent, IonPage, IonList, IonItem } from "@ionic/vue";
+import { IonContent, IonPage, IonList, IonItem, IonButton } from "@ionic/vue";
 import { UserProvider } from "@/providers/user-provider";
-import { chatCollection } from "../firebase";
+import { chatCollection, auth } from "../firebase";
+import { useRouter } from "vue-router";
 export default defineComponent({
   name: "Home",
-  components: { IonPage, IonContent, IonList, IonItem },
+  components: { IonPage, IonContent, IonList, IonItem, IonButton },
   setup() {
     const userStore = inject<UserProvider>("userStore");
     const name = computed(() => userStore?.name);
     const chatIDs = computed(() => userStore?.chatIDs);
+    const router = useRouter();
 
     function createChat() {
       chatCollection.add({ messages: [] }).then((ref) => {
@@ -34,7 +41,11 @@ export default defineComponent({
       });
     }
 
-    return { name, createChat, chatIDs };
+    function logout() {
+      auth.signOut().then(() => router.push("/auth"));
+    }
+
+    return { name, createChat, logout, chatIDs };
   },
 });
 </script>
