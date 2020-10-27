@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, inject } from "vue";
+import { computed, defineComponent, inject, watchEffect } from "vue";
 import { IonContent, IonPage, IonList, IonItem, IonButton } from "@ionic/vue";
 import { UserProvider } from "@/providers/user-provider";
 import { Chat } from "@/providers/chats-provider";
@@ -42,6 +42,12 @@ export default defineComponent({
     const name = computed(() => userStore?.name);
     const chatIDs = computed(() => userStore?.chatIDs);
     const router = useRouter();
+
+    watchEffect(() => {
+      if (userStore && !userStore.state.id) {
+        router.push('/auth')
+      }
+    })
 
     async function createChat() {
       const chat: Partial<Chat> = {

@@ -47,7 +47,7 @@ import {
   IonBackButton,
 } from "@ionic/vue";
 import { computed, defineComponent, inject, reactive, watchEffect } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { ChatProvider, Chat } from "@/providers/chats-provider";
 import { chatCollection } from "../firebase";
 import { UserProvider } from "@/providers/user-provider";
@@ -75,10 +75,14 @@ export default defineComponent({
     });
     const chatStore = inject<ChatProvider>("chatStore");
     const userStore = inject<UserProvider>("userStore");
+    const router = useRouter();
     const uid = computed(() => userStore?.state.id);
     const chat = computed(() => chatStore?.state);
 
     watchEffect(() => {
+      if (userStore && !userStore.state.id) {
+        router.push("/auth");
+      }
       if (chat?.value?.id) {
         chatCollection.doc(chat?.value.id).onSnapshot((snap) => {
           const chat = snap.data() as Chat;
