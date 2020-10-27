@@ -2,7 +2,7 @@
 <template>
   <ion-page>
     <ion-content :fullscreen="true" class="ion-padding">
-      <div v-if="chat" class="container">
+      <div v-if="chat && uid" class="container">
         <div
           :key="i"
           v-for="(message, i) in chat.messages"
@@ -12,7 +12,7 @@
           <p v-if="message.sender.id !== uid" class="author">
             {{ message.sender.name }}
           </p>
-          <p class="body">{{message.body}}</p>
+          <p class="body">{{ message.body }}</p>
         </div>
       </div>
     </ion-content>
@@ -35,7 +35,14 @@ import {
   IonButton,
   IonIcon,
 } from "@ionic/vue";
-import { computed, defineComponent, inject, reactive } from "vue";
+import {
+  computed,
+  defineComponent,
+  inject,
+  reactive,
+  watch,
+  watchEffect,
+} from "vue";
 import { useRoute } from "vue-router";
 import { ChatProvider, Chat } from "@/providers/chats-provider";
 import { chatCollection } from "../firebase";
@@ -60,10 +67,20 @@ export default defineComponent({
     });
     const chatStore = inject<ChatProvider>("chatStore");
     const userStore = inject<UserProvider>("userStore");
+    const uid = computed(() => userStore?.state.id);
     const chat = computed(() => chatStore?.state);
 
+    watchEffect(() => {
+      if (chat?.value?.id) {
+        chatCollection.doc(chat?.value.id).onSnapshot((snap) => {
+          const chat = snap.data() as Chat;
+          chatStore?.setChat(chat);
+        });
+      }
+    });
+
     async function sendMessage() {
-      if (!chat.value) return;
+      if (!chat?.value) return;
 
       await chatCollection.doc(chat.value.id).set(
         {
@@ -93,7 +110,7 @@ export default defineComponent({
         chatStore?.setChat(chat);
       });
 
-    return { send, chat, uid: userStore?.state.id, state, sendMessage };
+    return { send, chat, uid, state, sendMessage };
   },
 });
 </script>
