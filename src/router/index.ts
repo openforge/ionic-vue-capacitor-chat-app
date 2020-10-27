@@ -1,17 +1,17 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
-import Home from '../views/Home.vue';
+import Auth from '../views/Auth.vue';
 import Chat from '../views/Chat.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/home'
+    redirect: '/auth'
   },
   {
-    path: '/home',
-    name: 'Home',
-    component: Home
+    path: '/auth',
+    name: 'Auth',
+    component: Auth
   },
   {
     path: '/chat/:id',

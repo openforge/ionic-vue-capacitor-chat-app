@@ -36,7 +36,7 @@ import { defineComponent, reactive, toRefs } from "vue";
 import { auth, userCollection } from "../firebase";
 
 export default defineComponent({
-  name: "Home",
+  name: "Auth",
   components: {
     IonContent,
     IonPage,
