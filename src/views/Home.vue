@@ -1,10 +1,20 @@
 <template>
   <ion-page>
     <ion-content :fullscreen="true" class="ion-padding ion-text-center">
-      <div class="container">
-        <h1>Enter Name</h1>
-        <ion-input />
-        <ion-button class="ion-margin" color="light" expand="block"><b>login</b></ion-button>
+      <div class="container ion-padding">
+        <h1>Vue Chat</h1>
+
+        <ion-input placeholder="Name" v-model="name" />
+        <ion-input type="email" placeholder="Email" v-model="email" />
+        <ion-input type="password" placeholder="Password" v-model="password" />
+
+        <ion-button
+          @click.prevent="login()"
+          class="ion-margin"
+          color="light"
+          expand="block"
+          >login</ion-button
+        >
       </div>
     </ion-content>
   </ion-page>
@@ -12,7 +22,8 @@
 
 <script lang="ts">
 import { IonContent, IonPage, IonInput, IonButton } from "@ionic/vue";
-import { defineComponent } from "vue";
+import { defineComponent, reactive, toRefs } from "vue";
+import { auth } from "../firebase";
 
 export default defineComponent({
   name: "Home",
@@ -23,20 +34,30 @@ export default defineComponent({
     IonButton,
   },
   setup() {
-    const user = '';
-  }
+    const formData = reactive({
+      name: "",
+      email: "",
+      password: "",
+    });
+    function login() {
+      return auth.signInWithEmailAndPassword(formData.email, formData.password);
+    }
+    return { ...toRefs(formData), login };
+  },
 });
 </script>
 
 <style scoped>
 .container {
-  margin: auto;
   margin-top: 25%;
-  width: 75%;
 }
 ion-input {
   --background: var(--ion-color-light);
   border-radius: 20px;
-  margin: auto;
+  font-weight: bold;
+  margin: 20px auto;
+}
+ion-button {
+  font-weight: bold;
 }
 </style>
