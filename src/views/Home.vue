@@ -6,7 +6,7 @@
         class="ion-margin"
         color="success"
         @click.prevent="createChat()"
-        >Add New Chat</ion-button
+        >new chat</ion-button
       >
       <ion-list v-if="chatIDs">
         <ion-item @click.prevent="router.push(`/chat/${id}`)" v-for="(id, i) in chatIDs" :key="i">
@@ -14,7 +14,7 @@
         </ion-item>
       </ion-list>
       <ion-button class="ion-margin" color="warning" @click.prevent="logout()"
-        >Logout</ion-button
+        >logout</ion-button
       >
     </ion-content>
   </ion-page>
