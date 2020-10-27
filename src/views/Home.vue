@@ -9,8 +9,15 @@
         >new chat</ion-button
       >
       <ion-list v-if="chatIDs">
-        <ion-item @click.prevent="router.push(`/chat/${id}`)" v-for="(id, i) in chatIDs" :key="i">
+        <ion-item
+          @click.prevent="router.push(`/chat/${id}`)"
+          v-for="(id, i) in chatIDs"
+          :key="i"
+        >
           {{ id }}
+          <ion-button slot="end" @click.prevent="deleteChat(id, $event)" color="danger"
+            >delete</ion-button
+          >
         </ion-item>
       </ion-list>
       <ion-button class="ion-margin" color="warning" @click.prevent="logout()"
@@ -45,11 +52,16 @@ export default defineComponent({
       await ref.set({ id: ref.id }, { merge: true });
     }
 
+    async function deleteChat(id: string, e: Event) {
+      e.stopPropagation();
+      return await chatCollection.doc(id).delete();
+    }
+
     function logout() {
       auth.signOut().then(() => router.push("/auth"));
     }
 
-    return { name, createChat, logout, chatIDs, router };
+    return { name, createChat, deleteChat, logout, chatIDs, router };
   },
 });
 </script>
