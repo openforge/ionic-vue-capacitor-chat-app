@@ -8,7 +8,7 @@
         <ion-input type="email" placeholder="Email" v-model="email" />
         <ion-input type="password" placeholder="Password" v-model="password" />
 
-        <ion-text color="danger" v-if="error">{{error}}</ion-text>
+        <ion-text color="danger" v-if="error">{{ error }}</ion-text>
 
         <ion-button
           @click.prevent="logIn()"
@@ -33,6 +33,7 @@
 import { IonContent, IonPage, IonInput, IonButton, IonText } from "@ionic/vue";
 import { auth as Auth } from "firebase";
 import { defineComponent, reactive, toRefs } from "vue";
+import { useRouter } from "vue-router";
 import { auth, userCollection } from "../firebase";
 
 export default defineComponent({
@@ -42,7 +43,7 @@ export default defineComponent({
     IonPage,
     IonInput,
     IonButton,
-    IonText
+    IonText,
   },
   setup() {
     const formData = reactive({
@@ -51,6 +52,7 @@ export default defineComponent({
       password: "",
       error: "",
     });
+    const router = useRouter();
 
     function updateUser(auth: Auth.UserCredential) {
       if (!auth.user) return;
@@ -64,16 +66,21 @@ export default defineComponent({
         name: formData.name,
       };
 
-      userCollection.doc(uid).set(user);
+      return userCollection.doc(uid).set(user);
+    }
+
+    function goToHome() {
+      router.push("/home");
     }
 
     function logIn() {
       return auth
         .signInWithEmailAndPassword(formData.email, formData.password)
         .then(updateUser)
-        .catch(e => {
+        .then(goToHome)
+        .catch((e) => {
           console.warn(e);
-          formData.error = "User does not exist"
+          formData.error = "User does not exist";
         });
     }
 
@@ -81,9 +88,10 @@ export default defineComponent({
       return auth
         .createUserWithEmailAndPassword(formData.email, formData.password)
         .then(updateUser)
-        .catch(e => {
+        .then(goToHome)
+        .catch((e) => {
           console.warn(e);
-          formData.error = "User already exists"
+          formData.error = "User already exists";
         });
     }
 
