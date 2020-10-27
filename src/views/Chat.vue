@@ -1,13 +1,15 @@
 /* eslint-disable vue/require-v-for-key */
 <template>
   <ion-page>
-    <ion-content :fullscreen="true" class="ion-padding">
-      <!-- <div class="chat-bubble">
-        <p class="author">Claudio</p>
+    <ion-content v-if="chat" :fullscreen="true" class="ion-padding">
+      <div
+        :key="i"
+        v-for="(message, i) in chat.messages"
+        v-bind:class="{ receiver: message.sender.id === uid }"
+        class="chat-bubble"
+      >
+        <p v-if="message.sender.id !== uid" class="author">{{message.sender.name}}</p>
         <p class="body">Hello, this is a message.</p>
-      </div> -->
-      <div class="chat-bubble receiver">
-        <p class="body"></p>
       </div>
     </ion-content>
     <ion-footer class="ion-padding">
@@ -31,7 +33,8 @@ import {
 import { computed, defineComponent, inject } from "vue";
 import { useRoute } from "vue-router";
 import { ChatProvider, Chat } from "@/providers/chats-provider";
-import { chatCollection } from '../firebase';
+import { chatCollection } from "../firebase";
+import { UserProvider } from "@/providers/user-provider";
 
 export default defineComponent({
   name: "Chat",
@@ -46,19 +49,23 @@ export default defineComponent({
     const route = useRoute();
     const { id } = route.params;
     const chatStore = inject<ChatProvider>("userStore");
+    const userStore = inject<UserProvider>("userStore");
     const chat = computed(() => chatStore?.state);
 
-    chatCollection.doc(id as string).get().then(ref => {
-      if (!ref.exists || !chatStore) {
-        // TODO: if id doeesn't match any chats redirect to home or auth
-        console.warn("Chat doesn't exist");
-        return;
-      }
-      const chat = ref.data() as Chat;
-      chatStore?.setChat(chat);
-    })
+    chatCollection
+      .doc(id as string)
+      .get()
+      .then((ref) => {
+        if (!ref.exists || !chatStore) {
+          // TODO: if id doeesn't match any chats redirect to home or auth
+          console.warn("Chat doesn't exist");
+          return;
+        }
+        const chat = ref.data() as Chat;
+        chatStore?.setChat(chat);
+      });
 
-    return { send, chat };
+    return { send, chat, uid: userStore?.state.id };
   },
 });
 </script>
