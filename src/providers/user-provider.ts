@@ -28,8 +28,8 @@ const setUser = (user: User) => {
   Object.assign(state, user);
 };
 
-const addChatID = (id: string) => {
-  state.chatIDs.push(id);
+const setChatIDs = (ids: string[]) => {
+  state.chatIDs = ids;
 }
 
 const name = computed(() => state.name);
@@ -38,7 +38,7 @@ const chatIDs = computed(() => state.chatIDs);
 export const userStore = readonly({
   state,
   setUser,
-  addChatID,
+  setChatIDs,
   name,
   chatIDs,
 });

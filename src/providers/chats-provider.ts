@@ -3,6 +3,7 @@ import { User } from './user-provider';
 
 export interface Chat {
     id: string;
+    createdByID: string;
     messages: {
         body: string;
         sender: User;
@@ -12,6 +13,7 @@ export interface Chat {
 export interface ChatProvider {
     state: {
         id: string;
+        createdByID: string;
         messages: {
             body: string;
             sender: {
@@ -32,6 +34,7 @@ export interface ChatProvider {
 
 const state = reactive<Chat>({
     id: '',
+    createdByID: '',
     messages: [],
 });
 

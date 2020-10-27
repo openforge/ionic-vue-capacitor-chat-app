@@ -24,6 +24,7 @@
 import { computed, defineComponent, inject } from "vue";
 import { IonContent, IonPage, IonList, IonItem, IonButton } from "@ionic/vue";
 import { UserProvider } from "@/providers/user-provider";
+import { Chat } from "@/providers/chats-provider";
 import { chatCollection, auth } from "../firebase";
 import { useRouter } from "vue-router";
 export default defineComponent({
@@ -35,10 +36,13 @@ export default defineComponent({
     const chatIDs = computed(() => userStore?.chatIDs);
     const router = useRouter();
 
-    function createChat() {
-      chatCollection.add({ messages: [] }).then((ref) => {
-        ref.set({ id: ref.id }, { merge: true });
-      });
+    async function createChat() {
+      const chat: Partial<Chat> = {
+        createdByID: userStore?.state.id,
+        messages: [],
+      };
+      const ref = await chatCollection.add(chat);
+      await ref.set({ id: ref.id }, { merge: true });
     }
 
     function logout() {
