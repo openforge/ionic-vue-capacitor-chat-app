@@ -19,7 +19,15 @@
           <p v-if="message.sender.id !== uid" class="author">
             {{ message.sender.name }}
           </p>
-          <p class="body">{{ message.body }}</p>
+          <p class="body">
+            {{ message.body }}
+            <a
+              target="_blank"
+              v-if="message.coords"
+              v-bind:href="`https://www.google.com/maps/@${message.coords.latitude},${message.coords.longitude},16z`"
+              >See location on map</a
+            >
+          </p>
         </div>
       </div>
     </ion-content>
@@ -93,18 +101,32 @@ export default defineComponent({
       }
     });
 
-    async function sendMessage() {
+    async function sendMessage(coords?: {
+      latitude: number;
+      longitude: number;
+    }) {
       if (!chat?.value) return;
 
-      await chatCollection.doc(chat.value.id).set(
-        {
-          messages: firestore.FieldValue.arrayUnion({
+      const message = coords
+        ? {
             body: state.message,
             sender: {
               name: userStore?.state.name,
               id: userStore?.state.id,
             },
-          }),
+            coords,
+          }
+        : {
+            body: state.message,
+            sender: {
+              name: userStore?.state.name,
+              id: userStore?.state.id,
+            },
+          };
+
+      await chatCollection.doc(chat.value.id).set(
+        {
+          messages: firestore.FieldValue.arrayUnion(message),
         },
         { merge: true }
       );
@@ -115,12 +137,10 @@ export default defineComponent({
       const {
         coords: { latitude, longitude },
       } = await getCurrentPosition();
-      const zoom = 16;
-      const url = `https://www.google.com/maps/@${latitude},${longitude},${zoom}z`;
-      state.message = url;
-      sendMessage();
+      const coords = { latitude, longitude };
+      // const url = `https://www.google.com/maps/@${latitude},${longitude},${zoom}z`;
 
-      console.log(url);
+      sendMessage(coords);
     }
 
     chatCollection

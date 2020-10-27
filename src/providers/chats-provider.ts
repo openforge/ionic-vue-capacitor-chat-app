@@ -7,6 +7,10 @@ export interface Chat {
     messages: {
         body: string;
         sender: User;
+        coords?: {
+            latitude: number;
+            longitude: number;
+        };
     }[];
 }
 
@@ -19,6 +23,10 @@ export interface ChatProvider {
             sender: {
                 id: string;
                 name: string;
+            };
+            coords?: {
+                latitude: number;
+                longitude: number;
             };
         }[];
     };
