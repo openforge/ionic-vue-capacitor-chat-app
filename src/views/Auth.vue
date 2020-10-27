@@ -64,7 +64,7 @@ export default defineComponent({
         name: formData.name,
       };
 
-      userCollection.doc(uid).update(user);
+      userCollection.doc(uid).set(user);
     }
 
     function logIn() {

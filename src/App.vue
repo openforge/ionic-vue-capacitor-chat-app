@@ -5,14 +5,18 @@
 </template>
 
 <script lang="ts">
-import { IonApp, IonRouterOutlet } from '@ionic/vue';
-import { defineComponent } from 'vue';
+import { IonApp, IonRouterOutlet } from "@ionic/vue";
+import { defineComponent, provide } from "vue";
+import { userStore } from "./providers/user-provider";
 
 export default defineComponent({
-  name: 'App',
+  name: "App",
   components: {
     IonApp,
-    IonRouterOutlet
+    IonRouterOutlet,
+  },
+  setup() {
+    provide('userStore', userStore);
   }
 });
 </script>

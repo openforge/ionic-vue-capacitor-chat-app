@@ -1,8 +1,17 @@
-import { computed, reactive, readonly } from 'vue';
+import { computed, ComputedRef, reactive, readonly } from 'vue';
 
 export interface User {
   id: string;
   name: string;
+}
+
+export interface UserProvider {
+  state: {
+    id: string;
+    name: string;
+  };
+  setUser: (user: User) => void;
+  name: ComputedRef<string>;
 }
 
 const state = reactive<User>({
@@ -17,7 +26,7 @@ const setUser = (user: User) => {
 const name = computed(() => state.name);
 
 export const userStore = readonly({
-    state,
-    setUser,
-    name
-})
+  state,
+  setUser,
+  name,
+});
