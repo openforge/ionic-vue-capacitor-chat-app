@@ -28,12 +28,15 @@
       <ion-button @click="sendMessage()" fill="clear">
         <ion-icon :icon="send"></ion-icon>
       </ion-button>
+      <ion-button @click="sendLocation()" fill="clear">
+        <ion-icon :icon="location"></ion-icon>
+      </ion-button>
     </ion-footer>
   </ion-page>
 </template>
 
 <script lang="ts">
-import { send } from "ionicons/icons";
+import { send, location } from "ionicons/icons";
 import {
   IonContent,
   IonPage,
@@ -52,6 +55,7 @@ import { ChatProvider, Chat } from "@/providers/chats-provider";
 import { chatCollection } from "../firebase";
 import { UserProvider } from "@/providers/user-provider";
 import { firestore } from "firebase";
+import { useGeolocation } from "../composables/useGeolocation";
 
 export default defineComponent({
   name: "Chat",
@@ -75,14 +79,12 @@ export default defineComponent({
     });
     const chatStore = inject<ChatProvider>("chatStore");
     const userStore = inject<UserProvider>("userStore");
+    const { getCurrentPosition } = useGeolocation();
     const router = useRouter();
     const uid = computed(() => userStore?.state.id);
     const chat = computed(() => chatStore?.state);
 
     watchEffect(() => {
-      if (userStore && !userStore.state.id) {
-        router.push("/auth");
-      }
       if (chat?.value?.id) {
         chatCollection.doc(chat?.value.id).onSnapshot((snap) => {
           const chat = snap.data() as Chat;
@@ -109,20 +111,31 @@ export default defineComponent({
       state.message = "";
     }
 
+    async function sendLocation() {
+      const {
+        coords: { latitude, longitude },
+      } = await getCurrentPosition();
+      const zoom = 16;
+      const url = `https://www.google.com/maps/@${latitude},${longitude},${zoom}z`;
+      state.message = url;
+      sendMessage();
+
+      console.log(url);
+    }
+
     chatCollection
       .doc(id as string)
       .get()
       .then((ref) => {
-        if (!ref.exists || !chatStore) {
-          // TODO: if id doeesn't match any chats redirect to home or auth
-          console.warn("Chat doesn't exist");
+        if (!ref.exists) {
+          router.push("/home");
           return;
         }
         const chat = ref.data() as Chat;
         chatStore?.setChat(chat);
       });
 
-    return { send, chat, uid, state, sendMessage };
+    return { send, location, chat, uid, state, sendMessage, sendLocation };
   },
 });
 </script>

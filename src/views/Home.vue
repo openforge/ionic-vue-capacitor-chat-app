@@ -15,7 +15,10 @@
           :key="i"
         >
           {{ id }}
-          <ion-button slot="end" @click.prevent="deleteChat(id, $event)" color="danger"
+          <ion-button
+            slot="end"
+            @click.prevent="deleteChat(id, $event)"
+            color="danger"
             >delete</ion-button
           >
         </ion-item>
@@ -42,12 +45,6 @@ export default defineComponent({
     const name = computed(() => userStore?.name);
     const chatIDs = computed(() => userStore?.chatIDs);
     const router = useRouter();
-
-    watchEffect(() => {
-      if (userStore && !userStore.state.id) {
-        router.push('/auth')
-      }
-    })
 
     async function createChat() {
       const chat: Partial<Chat> = {
