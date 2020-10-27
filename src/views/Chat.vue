@@ -28,7 +28,10 @@ import {
   IonInput,
   IonButton,
 } from "@ionic/vue";
-import { defineComponent, reactive } from "vue";
+import { computed, defineComponent, inject } from "vue";
+import { useRoute } from "vue-router";
+import { ChatProvider, Chat } from "@/providers/chats-provider";
+import { chatCollection } from '../firebase';
 
 export default defineComponent({
   name: "Chat",
@@ -40,8 +43,22 @@ export default defineComponent({
     IonButton,
   },
   setup() {
-    const chatRoom = reactive({});
-    return { send, chatRoom };
+    const route = useRoute();
+    const { id } = route.params;
+    const chatStore = inject<ChatProvider>("userStore");
+    const chat = computed(() => chatStore?.state);
+
+    chatCollection.doc(id as string).get().then(ref => {
+      if (!ref.exists || !chatStore) {
+        // TODO: if id doeesn't match any chats redirect to home or auth
+        console.warn("Chat doesn't exist");
+        return;
+      }
+      const chat = ref.data() as Chat;
+      chatStore?.setChat(chat);
+    })
+
+    return { send, chat };
   },
 });
 </script>

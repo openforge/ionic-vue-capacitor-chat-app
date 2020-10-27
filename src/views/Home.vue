@@ -9,7 +9,7 @@
         >Add New Chat</ion-button
       >
       <ion-list v-if="chatIDs">
-        <ion-item v-for="(id, i) in chatIDs" :key="i">
+        <ion-item @click.prevent="router.push(`/chat/${id}`)" v-for="(id, i) in chatIDs" :key="i">
           {{ id }}
         </ion-item>
       </ion-list>
@@ -49,7 +49,7 @@ export default defineComponent({
       auth.signOut().then(() => router.push("/auth"));
     }
 
-    return { name, createChat, logout, chatIDs };
+    return { name, createChat, logout, chatIDs, router };
   },
 });
 </script>
