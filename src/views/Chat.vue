@@ -1,20 +1,24 @@
 /* eslint-disable vue/require-v-for-key */
 <template>
   <ion-page>
-    <ion-content v-if="chat" :fullscreen="true" class="ion-padding">
-      <div
-        :key="i"
-        v-for="(message, i) in chat.messages"
-        v-bind:class="{ receiver: message.sender.id === uid }"
-        class="chat-bubble"
-      >
-        <p v-if="message.sender.id !== uid" class="author">{{message.sender.name}}</p>
-        <p class="body">Hello, this is a message.</p>
+    <ion-content :fullscreen="true" class="ion-padding">
+      <div v-if="chat" class="container">
+        <div
+          :key="i"
+          v-for="(message, i) in chat.messages"
+          v-bind:class="{ receiver: message.sender.id === uid }"
+          class="chat-bubble"
+        >
+          <p v-if="message.sender.id !== uid" class="author">
+            {{ message.sender.name }}
+          </p>
+          <p class="body">{{message.body}}</p>
+        </div>
       </div>
     </ion-content>
     <ion-footer class="ion-padding">
-      <ion-input />
-      <ion-button fill="clear">
+      <ion-input v-model="state.message" />
+      <ion-button @click="sendMessage()" fill="clear">
         <ion-icon :icon="send"></ion-icon>
       </ion-button>
     </ion-footer>
@@ -29,12 +33,14 @@ import {
   IonFooter,
   IonInput,
   IonButton,
+  IonIcon,
 } from "@ionic/vue";
-import { computed, defineComponent, inject } from "vue";
+import { computed, defineComponent, inject, reactive } from "vue";
 import { useRoute } from "vue-router";
 import { ChatProvider, Chat } from "@/providers/chats-provider";
 import { chatCollection } from "../firebase";
 import { UserProvider } from "@/providers/user-provider";
+import { firestore } from "firebase";
 
 export default defineComponent({
   name: "Chat",
@@ -44,13 +50,35 @@ export default defineComponent({
     IonFooter,
     IonInput,
     IonButton,
+    IonIcon,
   },
   setup() {
     const route = useRoute();
     const { id } = route.params;
-    const chatStore = inject<ChatProvider>("userStore");
+    const state = reactive({
+      message: "",
+    });
+    const chatStore = inject<ChatProvider>("chatStore");
     const userStore = inject<UserProvider>("userStore");
     const chat = computed(() => chatStore?.state);
+
+    async function sendMessage() {
+      if (!chat.value) return;
+
+      await chatCollection.doc(chat.value.id).set(
+        {
+          messages: firestore.FieldValue.arrayUnion({
+            body: state.message,
+            sender: {
+              name: userStore?.state.name,
+              id: userStore?.state.id,
+            },
+          }),
+        },
+        { merge: true }
+      );
+      state.message = "";
+    }
 
     chatCollection
       .doc(id as string)
@@ -65,7 +93,7 @@ export default defineComponent({
         chatStore?.setChat(chat);
       });
 
-    return { send, chat, uid: userStore?.state.id };
+    return { send, chat, uid: userStore?.state.id, state, sendMessage };
   },
 });
 </script>
