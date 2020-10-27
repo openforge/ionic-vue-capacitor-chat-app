@@ -1,6 +1,13 @@
 /* eslint-disable vue/require-v-for-key */
 <template>
   <ion-page>
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-back-button defaultHref="/home"></ion-back-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
     <ion-content :fullscreen="true" class="ion-padding">
       <div v-if="chat && uid" class="container">
         <div
@@ -34,15 +41,12 @@ import {
   IonInput,
   IonButton,
   IonIcon,
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonBackButton,
 } from "@ionic/vue";
-import {
-  computed,
-  defineComponent,
-  inject,
-  reactive,
-  watch,
-  watchEffect,
-} from "vue";
+import { computed, defineComponent, inject, reactive, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { ChatProvider, Chat } from "@/providers/chats-provider";
 import { chatCollection } from "../firebase";
@@ -58,6 +62,10 @@ export default defineComponent({
     IonInput,
     IonButton,
     IonIcon,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonBackButton,
   },
   setup() {
     const route = useRoute();
