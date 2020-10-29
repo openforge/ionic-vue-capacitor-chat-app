@@ -14,14 +14,14 @@
         <ion-text color="danger" v-if="error">{{ error }}</ion-text>
 
         <ion-button
-          @click.prevent="logIn()"
+          @click.prevent="login(name, email, password)"
           class="ion-margin"
           color="light"
           expand="block"
           >login</ion-button
         >
         <ion-button
-          @click.prevent="signUp()"
+          @click.prevent="signup(name, email, password)"
           class="ion-margin"
           color="medium"
           expand="block"
@@ -34,10 +34,8 @@
 
 <script lang="ts">
 import { IonContent, IonPage, IonInput, IonButton, IonText } from "@ionic/vue";
-import { auth as Auth } from "firebase";
 import { defineComponent, reactive, toRefs } from "vue";
-import { useRouter } from "vue-router";
-import { auth, userCollection } from "../firebase";
+import { useAuthentication } from "../composables/useAuthentication";
 
 export default defineComponent({
   name: "Auth",
@@ -55,60 +53,20 @@ export default defineComponent({
       password: "",
       error: "",
     });
-    const router = useRouter();
 
-    function updateUser(auth: Auth.UserCredential) {
-      if (!auth.user) return;
+    const { login, signup } = useAuthentication();
 
-      const {
-        user: { uid },
-      } = auth;
-
-      const user = {
-        id: uid,
-        name: formData.name,
-      };
-
-      return userCollection.doc(uid).set(user);
-    }
-
-    function goToHome() {
-      router.push("/home");
-    }
-
-    function logIn() {
-      return auth
-        .signInWithEmailAndPassword(formData.email, formData.password)
-        .then(updateUser)
-        .then(goToHome)
-        .catch((e) => {
-          console.warn(e);
-          formData.error = "User does not exist";
-        });
-    }
-
-    function signUp() {
-      return auth
-        .createUserWithEmailAndPassword(formData.email, formData.password)
-        .then(updateUser)
-        .then(goToHome)
-        .catch((e) => {
-          console.warn(e);
-          formData.error = "User already exists";
-        });
-    }
-
-    return { ...toRefs(formData), logIn, signUp };
+    return { ...toRefs(formData), login, signup };
   },
 });
 </script>
 
 <style scoped>
-img {
-  margin-top: 25%
-}
 .container {
   margin-top: 10%;
+}
+img {
+  margin-top: 25%;
 }
 ion-input {
   --background: var(--ion-color-light);
