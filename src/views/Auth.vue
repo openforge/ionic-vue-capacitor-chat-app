@@ -1,6 +1,9 @@
 <template>
   <ion-page>
     <ion-content :fullscreen="true" class="ion-padding ion-text-center">
+      <img
+        src="https://openforge.io/wp-content/uploads/2020/02/openforge-logo-1-1.png"
+      />
       <div class="container ion-padding">
         <h1>Vue Chat</h1>
 
@@ -101,8 +104,11 @@ export default defineComponent({
 </script>
 
 <style scoped>
+img {
+  margin-top: 25%
+}
 .container {
-  margin-top: 25%;
+  margin-top: 10%;
 }
 ion-input {
   --background: var(--ion-color-light);
