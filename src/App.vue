@@ -7,7 +7,7 @@
 <script lang="ts">
 import { IonApp, IonRouterOutlet } from "@ionic/vue";
 import { defineComponent, provide } from "vue";
-import { chatStore } from "./providers/chats-provider";
+import { chatStore } from "./providers/chat-provider";
 import { userStore } from "./providers/user-provider";
 
 export default defineComponent({

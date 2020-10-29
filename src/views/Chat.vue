@@ -58,7 +58,7 @@ import {
 } from "@ionic/vue";
 import { computed, defineComponent, inject, reactive, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { ChatProvider, Chat } from "@/providers/chats-provider";
+import { ChatProvider, Chat } from "@/providers/chat-provider";
 import { chatCollection } from "../firebase";
 import { UserProvider } from "@/providers/user-provider";
 import { firestore } from "firebase";

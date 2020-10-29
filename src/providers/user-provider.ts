@@ -15,6 +15,7 @@ export interface UserProvider {
   setUser: (user: User) => void;
   addChatID: (id: string) => void;
   name: ComputedRef<string>;
+  id: ComputedRef<string>;
   chatIDs: ComputedRef<string[]>;
 }
 
@@ -30,15 +31,17 @@ const setUser = (user: User) => {
 
 const setChatIDs = (ids: string[]) => {
   state.chatIDs = ids;
-}
+};
 
 const name = computed(() => state.name);
+const id = computed(() => state.id);
 const chatIDs = computed(() => state.chatIDs);
 
 export const userStore = readonly({
   state,
   setUser,
   setChatIDs,
+  id,
   name,
   chatIDs,
 });
