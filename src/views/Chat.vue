@@ -20,6 +20,7 @@
           </p>
           <p class="body">
             {{ message.body }}
+            <br v-if="message.body" />
             <a
               v-if="message.coords"
               v-bind:href="`https://www.google.com/maps/@${message.coords.latitude},${message.coords.longitude},16z`"
