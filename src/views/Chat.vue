@@ -137,8 +137,6 @@ export default defineComponent({
         coords: { latitude, longitude },
       } = await getCurrentPosition();
       const coords = { latitude, longitude };
-      // const url = `https://www.google.com/maps/@${latitude},${longitude},${zoom}z`;
-
       sendMessage(coords);
     }
 
