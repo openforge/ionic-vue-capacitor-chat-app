@@ -49,5 +49,9 @@ export function useAuthentication() {
       });
   }
 
-  return { loginWithEmail, signupWithEmail };
+  function logout() {
+    auth.signOut().then(() => router.push("/auth"));
+  }
+
+  return { loginWithEmail, signupWithEmail, logout };
 }

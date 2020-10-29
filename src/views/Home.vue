@@ -35,13 +35,15 @@ import { computed, defineComponent, inject } from "vue";
 import { IonContent, IonPage, IonList, IonItem, IonButton } from "@ionic/vue";
 import { UserProvider } from "@/providers/user-provider";
 import { Chat } from "@/providers/chat-provider";
-import { chatCollection, auth } from "../firebase";
+import { chatCollection } from "../firebase";
 import { useRouter } from "vue-router";
+import { useAuthentication } from "@/composables/useAuthentication";
 export default defineComponent({
   name: "Home",
   components: { IonPage, IonContent, IonList, IonItem, IonButton },
   setup() {
     const userStore = inject<UserProvider>("userStore");
+    const { logout } = useAuthentication();
     const name = computed(() => userStore?.name);
     const chatIDs = computed(() => userStore?.chatIDs);
     const router = useRouter();
@@ -58,10 +60,6 @@ export default defineComponent({
     async function deleteChat(id: string, e: Event) {
       e.stopPropagation();
       return await chatCollection.doc(id).delete();
-    }
-
-    function logout() {
-      auth.signOut().then(() => router.push("/auth"));
     }
 
     return { name, createChat, deleteChat, logout, chatIDs, router };
