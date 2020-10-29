@@ -50,7 +50,7 @@ export function useAuthentication() {
   }
 
   function logout() {
-    auth.signOut().then(() => router.push("/auth"));
+    auth.signOut().then(() => router.push('/auth'));
   }
 
   return { loginWithEmail, signupWithEmail, logout };
