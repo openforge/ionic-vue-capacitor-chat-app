@@ -11,7 +11,7 @@ export function useAuthentication() {
     router.push('/home');
   };
 
-  function login(name: string, email: string, password: string) {
+  function loginWithEmail(name: string, email: string, password: string) {
     return auth
       .signInWithEmailAndPassword(email, password)
       .then((auth) => {
@@ -30,7 +30,7 @@ export function useAuthentication() {
       });
   }
 
-  function signup(name: string, email: string, password: string) {
+  function signupWithEmail(name: string, email: string, password: string) {
     return auth
       .createUserWithEmailAndPassword(email, password)
       .then((auth) => {
@@ -49,5 +49,5 @@ export function useAuthentication() {
       });
   }
 
-  return { login, signup };
+  return { loginWithEmail, signupWithEmail };
 }

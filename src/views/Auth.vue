@@ -7,21 +7,21 @@
       <div class="container ion-padding">
         <h1>Vue Chat</h1>
 
-        <ion-input placeholder="Name" v-model="name" />
-        <ion-input type="email" placeholder="Email" v-model="email" />
-        <ion-input type="password" placeholder="Password" v-model="password" />
+        <ion-input placeholder="Name" v-model="formData.name" />
+        <ion-input type="email" placeholder="Email" v-model="formData.email" />
+        <ion-input type="password" placeholder="Password" v-model="formData.password" />
 
-        <ion-text color="danger" v-if="error">{{ error }}</ion-text>
+        <ion-text color="danger" v-if="formData.error">{{ formData.error }}</ion-text>
 
         <ion-button
-          @click.prevent="login(name, email, password)"
+          @click.prevent="login()"
           class="ion-margin"
           color="light"
           expand="block"
           >login</ion-button
         >
         <ion-button
-          @click.prevent="signup(name, email, password)"
+          @click.prevent="signup()"
           class="ion-margin"
           color="medium"
           expand="block"
@@ -34,7 +34,7 @@
 
 <script lang="ts">
 import { IonContent, IonPage, IonInput, IonButton, IonText } from "@ionic/vue";
-import { defineComponent, reactive, toRefs } from "vue";
+import { defineComponent, reactive } from "vue";
 import { useAuthentication } from "../composables/useAuthentication";
 
 export default defineComponent({
@@ -53,10 +53,17 @@ export default defineComponent({
       password: "",
       error: "",
     });
+    const { loginWithEmail, signupWithEmail } = useAuthentication();
+    const login = () =>
+      loginWithEmail(formData.name, formData.email, formData.password).catch(
+        (e) => (formData.error = e)
+      );
+    const signup = () =>
+      signupWithEmail(formData.name, formData.email, formData.password).catch(
+        (e) => (formData.error = e)
+      );
 
-    const { login, signup } = useAuthentication();
-
-    return { ...toRefs(formData), login, signup };
+    return { formData, login, signup };
   },
 });
 </script>
