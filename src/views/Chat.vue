@@ -22,7 +22,6 @@
           <p class="body">
             {{ message.body }}
             <a
-              target="_blank"
               v-if="message.coords"
               v-bind:href="`https://www.google.com/maps/@${message.coords.latitude},${message.coords.longitude},16z`"
               >See location on map</a
