@@ -1,4 +1,3 @@
-/* eslint-disable vue/require-v-for-key */
 <template>
   <ion-page>
     <ion-header>
