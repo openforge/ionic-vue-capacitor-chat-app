@@ -31,11 +31,11 @@
       </div>
     </ion-content>
     <ion-footer class="ion-padding">
-      <ion-input v-model="state.message" />
-      <ion-button @click="sendMessage()" fill="clear">
+      <ion-input v-model="message" />
+      <ion-button @click="onSend" fill="clear">
         <ion-icon :icon="send"></ion-icon>
       </ion-button>
-      <ion-button @click="sendLocation()" fill="clear">
+      <ion-button @click="onLocate" fill="clear">
         <ion-icon :icon="location"></ion-icon>
       </ion-button>
     </ion-footer>
@@ -56,13 +56,11 @@ import {
   IonButtons,
   IonBackButton,
 } from "@ionic/vue";
-import { computed, defineComponent, inject, reactive, watchEffect } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { ChatProvider, Chat } from "@/providers/chat-provider";
-import { chatCollection } from "../firebase";
+import { computed, defineComponent, inject, reactive, toRefs } from "vue";
+import { useRoute } from "vue-router";
+import { ChatProvider } from "@/providers/chat-provider";
 import { UserProvider } from "@/providers/user-provider";
-import { firestore } from "firebase";
-import { useGeolocation } from "../composables/useGeolocation";
+import { useChat } from "../composables/useChat";
 
 export default defineComponent({
   name: "Chat",
@@ -86,73 +84,24 @@ export default defineComponent({
     });
     const chatStore = inject<ChatProvider>("chatStore");
     const userStore = inject<UserProvider>("userStore");
-    const { getCurrentPosition } = useGeolocation();
-    const router = useRouter();
+    const { sendMessage, sendLocation } = useChat(id as string);
     const uid = computed(() => userStore?.state.id);
     const chat = computed(() => chatStore?.state);
 
-    watchEffect(() => {
-      if (chat?.value?.id) {
-        chatCollection.doc(chat?.value.id).onSnapshot((snap) => {
-          const chat = snap.data() as Chat;
-          chatStore?.setChat(chat);
-        });
-      }
-    });
+    const onSend = () =>
+      sendMessage(state.message).then(() => (state.message = ""));
+    const onLocate = () =>
+      sendLocation(state.message).then(() => (state.message = ""));
 
-    async function sendMessage(coords?: {
-      latitude: number;
-      longitude: number;
-    }) {
-      if (!chat?.value) return;
-
-      const message = coords
-        ? {
-            body: state.message,
-            sender: {
-              name: userStore?.state.name,
-              id: userStore?.state.id,
-            },
-            coords,
-          }
-        : {
-            body: state.message,
-            sender: {
-              name: userStore?.state.name,
-              id: userStore?.state.id,
-            },
-          };
-
-      await chatCollection.doc(chat.value.id).set(
-        {
-          messages: firestore.FieldValue.arrayUnion(message),
-        },
-        { merge: true }
-      );
-      state.message = "";
-    }
-
-    async function sendLocation() {
-      const {
-        coords: { latitude, longitude },
-      } = await getCurrentPosition();
-      const coords = { latitude, longitude };
-      sendMessage(coords);
-    }
-
-    chatCollection
-      .doc(id as string)
-      .get()
-      .then((ref) => {
-        if (!ref.exists) {
-          router.push("/home");
-          return;
-        }
-        const chat = ref.data() as Chat;
-        chatStore?.setChat(chat);
-      });
-
-    return { send, location, chat, uid, state, sendMessage, sendLocation };
+    return {
+      send,
+      location,
+      chat,
+      uid,
+      ...toRefs(state),
+      onSend,
+      onLocate,
+    };
   },
 });
 </script>
