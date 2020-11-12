@@ -8,7 +8,7 @@ import { auth } from '@/firebase';
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/auth',
+    redirect: '/home',
   },
   {
     path: '/home',
@@ -33,11 +33,14 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (!auth.currentUser && to.name !== 'Auth') {
-    next('/auth');
-  }else {
-    next();
-  }
+  auth.onAuthStateChanged(_ => {
+    if (!auth.currentUser && to.name !== 'Auth') {
+      console.log('here');
+      next('/auth');
+    } else {
+      next();
+    }
+  });
 });
 
 export default router;

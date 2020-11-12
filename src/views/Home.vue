@@ -17,7 +17,12 @@
           {{ id }}
           <ion-button
             slot="end"
-            @click.prevent="deleteChat(id, $event)"
+            @click.stop="copyLink(`${baseURL}/chat/${id}`)"
+            >share</ion-button
+          >
+          <ion-button
+            slot="end"
+            @click.stop="deleteChat(id, $event)"
             color="danger"
             >delete</ion-button
           >
@@ -38,15 +43,18 @@ import { Chat } from "@/providers/chat-provider";
 import { chatCollection } from "../firebase";
 import { useRouter } from "vue-router";
 import { useAuthentication } from "@/composables/useAuthentication";
+import { useClipboard } from '@/composables/useClipboard';
 export default defineComponent({
   name: "Home",
   components: { IonPage, IonContent, IonList, IonItem, IonButton },
   setup() {
     const userStore = inject<UserProvider>("userStore");
     const { logout } = useAuthentication();
+    const { copyLink } = useClipboard();
     const name = computed(() => userStore?.name);
     const chatIDs = computed(() => userStore?.chatIDs);
     const router = useRouter();
+    const baseURL = window.location.origin;
 
     async function createChat() {
       const chat: Partial<Chat> = {
@@ -62,7 +70,7 @@ export default defineComponent({
       return await chatCollection.doc(id).delete();
     }
 
-    return { name, createChat, deleteChat, logout, chatIDs, router };
+    return { name, createChat, deleteChat, logout, chatIDs, router, copyLink, baseURL};
   },
 });
 </script>
